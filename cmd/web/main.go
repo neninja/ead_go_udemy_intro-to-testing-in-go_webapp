@@ -5,21 +5,21 @@ import (
 	"net/http"
 )
 
-type application struct {}
+type application struct{}
 
 func main() {
-  // setup
-  app := application{}
+	// setup
+	app := application{}
 
-  // routes
-  mux := app.routes()
+	// routes
+	mux := app.routes()
 
-  // print out a message
-  log.Println("Starting server on port 8000...")
+	// print out a message
+	log.Println("Starting server on port 8000...")
 
-  // start server
-  err := http.ListenAndServe(":8000", mux)
-  if err != nil {
-    log.Fatal(err)
-  }
+	// start server
+	err := http.ListenAndServe(":8000", mux)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
