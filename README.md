@@ -3,6 +3,15 @@
 https://www.udemy.com/course/introduction-to-testing-in-go-golang
 
 ```
+go lint ./...
+go fmt ./...
+```
+
+```
+go run ./cmd/web
+```
+
+```
 go run ./cmd/web
 go test ./...
 go test -cover ./...

@@ -33,31 +33,31 @@ func NewForm(data url.Values) *Form {
 }
 
 func (f *Form) Has(field string) bool {
-    x := f.Data.Get(field)
+	x := f.Data.Get(field)
 
-    if x == "" {
-        return false
-    }
+	if x == "" {
+		return false
+	}
 
-    return true
+	return true
 }
 
 func (f *Form) Required(fields ...string) {
-    for _, field := range fields {
-        value := f.Data.Get(field)
+	for _, field := range fields {
+		value := f.Data.Get(field)
 
-        if strings.TrimSpace(value) == "" {
-            f.Errors.Add(field, "This field cannot be blank")
-        }
-    }
+		if strings.TrimSpace(value) == "" {
+			f.Errors.Add(field, "This field cannot be blank")
+		}
+	}
 }
 
 func (f *Form) Check(ok bool, key, message string) {
-    if !ok {
-        f.Errors.Add(key, message)
-    }
+	if !ok {
+		f.Errors.Add(key, message)
+	}
 }
 
 func (f *Form) Valid() bool {
-    return len(f.Errors) == 0
+	return len(f.Errors) == 0
 }

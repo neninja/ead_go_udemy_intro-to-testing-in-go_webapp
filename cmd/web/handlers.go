@@ -38,24 +38,24 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, t string,
 }
 
 func (app *application) Login(w http.ResponseWriter, r *http.Request) {
-    err := r.ParseForm()
-    if err != nil {
-        fmt.Println(err)
-        http.Error(w, "bad request", http.StatusBadRequest)
-        return
-    }
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
 
-    form := NewForm(r.PostForm)
-    form.Required("email", "password")
+	form := NewForm(r.PostForm)
+	form.Required("email", "password")
 
-    if !form.Valid() {
-        fmt.Fprintf(w, "failed validation")
-        return
-    }
+	if !form.Valid() {
+		fmt.Fprintf(w, "failed validation")
+		return
+	}
 
-    email := r.Form.Get("email")
-    password := r.Form.Get("password")
-    fmt.Println(email, password)
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+	fmt.Println(email, password)
 
-    fmt.Fprint(w, email)
+	fmt.Fprint(w, email)
 }
