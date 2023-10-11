@@ -7,15 +7,15 @@ import (
 	"github.com/alexedwards/scs/v2"
 )
 
-type application struct{
-    Session *scs.SessionManager
+type application struct {
+	Session *scs.SessionManager
 }
 
 func main() {
 	// setup
 	app := application{}
 
-    app.Session = getSession()
+	app.Session = getSession()
 
 	// print out a message
 	log.Println("Starting server on port 8000...")
