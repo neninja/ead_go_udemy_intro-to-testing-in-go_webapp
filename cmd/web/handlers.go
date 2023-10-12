@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"path"
 	"time"
@@ -65,7 +66,15 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
-	fmt.Println(email, password)
+
+	user, err := app.DB.GetUserByEmail(email)
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println("From database: ", user.FirstName)
+
+	log.Println(email, password)
 
 	fmt.Fprint(w, email)
 }
