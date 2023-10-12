@@ -3,6 +3,10 @@
 https://www.udemy.com/course/introduction-to-testing-in-go-golang
 
 ```
+docker-compose up -d
+```
+
+```
 go lint ./...
 go fmt ./...
 ```
