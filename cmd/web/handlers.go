@@ -24,6 +24,10 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 	_ = app.render(w, r, "home.page.tpl", &TemplateData{Data: td})
 }
 
+func (app *application) Profile(w http.ResponseWriter, r *http.Request) {
+	_ = app.render(w, r, "profile.page.tpl", &TemplateData{})
+}
+
 type TemplateData struct {
 	IP   string
 	Data map[string]any
@@ -60,7 +64,8 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	form.Required("email", "password")
 
 	if !form.Valid() {
-		fmt.Fprintf(w, "failed validation")
+        app.Session.Put(r.Context(), "error", "Invalid login credentials")
+        http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -69,12 +74,15 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := app.DB.GetUserByEmail(email)
 	if err != nil {
-		log.Println(err)
+        app.Session.Put(r.Context(), "error", "Invalid login")
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-	log.Println("From database: ", user.FirstName)
+    log.Println(password, user.FirstName)
 
-	log.Println(email, password)
+    _ = app.Session.RenewToken(r.Context())
 
-	fmt.Fprint(w, email)
+    app.Session.Put(r.Context(), "flash", "Successfully logged in Login")
+    http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
 }
