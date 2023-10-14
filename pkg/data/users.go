@@ -2,7 +2,6 @@ package data
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"

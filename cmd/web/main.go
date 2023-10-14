@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/gob"
 	"flag"
 	"log"
 	"net/http"
+	"webapp/pkg/data"
 	"webapp/pkg/db"
 
 	"github.com/alexedwards/scs/v2"
@@ -16,6 +18,8 @@ type application struct {
 }
 
 func main() {
+	gob.Register(data.User{})
+
 	// setup
 	app := application{}
 
@@ -23,12 +27,12 @@ func main() {
 	flag.Parse()
 
 	conn, err := app.connectToDB()
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer conn.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
 
-    app.DB = db.PostgresConn{DB: conn}
+	app.DB = db.PostgresConn{DB: conn}
 
 	app.Session = getSession()
 
