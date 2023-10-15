@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -77,7 +78,7 @@ func TestAppHome(t *testing.T) {
 }
 
 func TestApp_renderWithBadTemplate(t *testing.T) {
-    pathToTemplatesBak := pathToTemplates
+	pathToTemplatesBak := pathToTemplates
 	pathToTemplates = "./testdata"
 
 	req, _ := http.NewRequest("GET", "/", nil)
@@ -103,4 +104,73 @@ func addContextAndSessionToRequest(req *http.Request, app application) *http.Req
 	ctx, _ := app.Session.Load(req.Context(), req.Header.Get("X-Session"))
 
 	return req.WithContext(ctx)
+}
+
+func Test_app_Login(t *testing.T) {
+	var tt = []struct {
+		name               string
+		postedData         url.Values
+		expectedStatusCode int
+		expectedLoc        string
+	}{
+		{
+			name: "valid login",
+			postedData: url.Values{
+				"email":    {"admin@example.com"},
+				"password": {"secret"},
+			},
+			expectedStatusCode: http.StatusSeeOther,
+			expectedLoc:        "/user/profile",
+		},
+		{
+			name: "bad credentials",
+			postedData: url.Values{
+				"email":    {"admin@example.com"},
+				"password": {"password"},
+			},
+			expectedStatusCode: http.StatusSeeOther,
+			expectedLoc:        "/",
+		},
+		{
+			name: "missing form data",
+			postedData: url.Values{
+				"email":    {""},
+				"password": {""},
+			},
+			expectedStatusCode: http.StatusSeeOther,
+			expectedLoc:        "/",
+		},
+		{
+			name: "user not found",
+			postedData: url.Values{
+				"email":    {"not@found.com"},
+				"password": {"secret"},
+			},
+			expectedStatusCode: http.StatusSeeOther,
+			expectedLoc:        "/",
+		},
+	}
+
+	for _, e := range tt {
+		req, _ := http.NewRequest("POST", "/login", strings.NewReader(e.postedData.Encode()))
+		req = addContextAndSessionToRequest(req, app)
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(app.Login)
+		handler.ServeHTTP(rr, req)
+
+		if rr.Code != e.expectedStatusCode {
+			t.Errorf("%s: returned wrong status code; expected %d, but got %d", e.name, e.expectedStatusCode, rr.Code)
+		}
+
+		actualLoc, err := rr.Result().Location()
+
+		if err != nil {
+			t.Errorf("%s: no location header set", e.name)
+		}
+
+		if actualLoc.String() != e.expectedLoc {
+			t.Errorf("%s: expected location %s but got %s", e.name, e.expectedLoc, actualLoc)
+		}
+	}
 }
