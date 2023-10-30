@@ -1,4 +1,4 @@
-# Webapp
+ Webapp
  
 https://www.udemy.com/course/introduction-to-testing-in-go-golang
 
@@ -24,4 +24,13 @@ go test ./...
 go test -cover ./...
 go test -coverprofile=coverage.out ./...
 go tool cover -html=coverage.out
+```
+
+
+## Troubleshooting
+
+- `pattern ./...: open /home/neni/dev/go/webapp/postgres-data: permission denied`
+
+```
+sudo chown 1000:1000 -R postgres-data
 ```
